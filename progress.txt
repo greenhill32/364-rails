@@ -1,1 +1,153 @@
-test
+  ---
+  1. App Store Assets Checklist
+  Item: App icon 1024x1024 PNG
+  Status: ✅ Likely fine
+  Notes: assets/icon.png exists — need to verify dimensions
+  ────────────────────────────────────────
+  Item: No transparency / rounded corners
+  Status: ⚠️ Unknown
+  Notes: Need to check the file
+  ────────────────────────────────────────
+  Item: Screenshots for all device sizes
+  Status: ❌ Missing
+  Notes: No screenshots folder
+  ────────────────────────────────────────
+  Item: App description < 4000 chars
+  Status: ✅ Done
+  Notes: Drafted in appstore-description.txt
+  ────────────────────────────────────────
+  Item: Privacy Policy URL live
+  Status: ✅ Done
+  Notes: https://publicbucket3222.blob.core.windows.net/$web/364/terms.html
+  ────────────────────────────────────────
+  Item: Support email exists & monitored
+  Status: ❌ Not set up
+  Notes: User needs to create/assign one
+  ---
+  2. Technical Setup Checklist
+  Item: API keys in env variables
+  Status: ✅ Done
+  Notes: Moved to .env + app.config.ts, read via expo-constants
+  ────────────────────────────────────────
+  Item: Error tracking (Sentry etc.)
+  Status: ❌ Not set up
+  Notes: Needs native rebuild
+  ────────────────────────────────────────
+  Item: TestFlight tested on real device
+  Status: ❌ Not done
+  Notes: Needs EAS rebuild with new native deps first
+  ────────────────────────────────────────
+  Item: Splash screen no white space
+  Status: ✅ Likely fine
+  Notes: splash.png exists, need to verify
+  ────────────────────────────────────────
+  Item: Third-party SDKs approved/maintained
+  Status: ✅ Likely fine
+  Notes: RevenueCat, Expo — all current
+  ────────────────────────────────────────
+  Item: Memory leaks checked
+  Status: ❌ Not done
+  Notes:
+  ────────────────────────────────────────
+  Item: Phase 3 — Persistence (SecureStore)
+  Status: ✅ Code done (⚠️ needs dev client rebuild)
+  Notes: Graceful fallback in place — app works without native module,
+         persistence activates after rebuild
+  ────────────────────────────────────────
+  Item: Bug fixes — golden day paywall, day counter, tap decrement
+  Status: ✅ Done
+  Notes: Paywall check runs before golden day, counter shows real
+         tapped count, taps decrement and track correctly
+  ---
+  3. Legal & Compliance Checklist
+  Item: Privacy Policy hosted & linked
+  Status: ✅ Done
+  Notes:
+  ────────────────────────────────────────
+  Item: Terms of Service URL
+  Status: ✅ Done
+  Notes:
+  ────────────────────────────────────────
+  Item: COPPA compliance
+  Status: ✅ N/A
+  Notes: Not targeting children
+  ────────────────────────────────────────
+  Item: Data collection declared in ASC
+  Status: ❌ Not done
+  Notes: App Store Connect not configured
+  ────────────────────────────────────────
+  Item: Age rating matches content
+  Status: ❌ Not done
+  Notes:
+  ---
+  4. Developer Account Checklist
+  Item: Apple Developer account active
+  Status: ✅ Likely
+  Notes: EAS build succeeded
+  ────────────────────────────────────────
+  Item: Google Play account
+  Status: ⚠️ N/A
+  Notes: Not needed
+  ────────────────────────────────────────
+  Item: Bundle ID matches everywhere
+  Status: ✅ Done
+  Notes: com.greenhill32.364waystosayno in app.config.ts
+  ────────────────────────────────────────
+  Item: Certificates not expired
+  Status: ✅ Likely
+  Notes: EAS build succeeded
+  ---
+  5. Cost Reality Check
+  Item: Hosting costs
+  Status: ✅ Minimal
+  Notes: No backend — just RevenueCat (free tier)
+  ────────────────────────────────────────
+  Item: Database
+  Status: ✅ None
+  Notes: All local
+  ────────────────────────────────────────
+  Item: AI APIs
+  Status: ✅ None
+  Notes:
+  ────────────────────────────────────────
+  Item: Payments
+  Status: ✅ Known
+  Notes: Apple takes 30%, RevenueCat free up to $2.5M
+  ────────────────────────────────────────
+  Item: Push notifications
+  Status: ✅ N/A
+  Notes: Not using them
+  ---
+  Summary: ❌ BLOCKED
+
+  Remaining blockers:
+  1. No support email — user needs to set up
+  2. No error tracking — needs native rebuild
+  3. No screenshots — needs app running on device
+  4. No TestFlight testing — needs EAS rebuild
+  5. No data collection declarations — App Store Connect
+  6. No age rating set — App Store Connect
+  7. Memory leaks not checked — needs running app
+
+  Resolved since last update:
+  ✅ Privacy policy URL
+  ✅ Terms of service
+  ✅ API key moved to env vars (.env + app.config.ts)
+  ✅ App Store description drafted (appstore-description.txt)
+  ✅ Phase 3 persistence code (SecureStore with graceful fallback)
+  ✅ Golden day paywall bug fixed
+  ✅ Day counter now shows real tapped count
+  ✅ Tap decrement implemented
+  ✅ Golden day reads from user selection, not hardcoded
+
+  Next critical step: EAS rebuild to unlock native modules
+  Run: npx eas-cli@latest build --platform ios --profile development-simulator
+
+
+
+TODO
+settings button not working
+gold day is clickable without paying
+on gold day there is black boarder top and bottom of gif
+x close button not working on gold day
+change lucky day button not working

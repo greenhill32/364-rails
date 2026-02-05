@@ -41,19 +41,10 @@ function getFirstDayOfMonth(month: number, year: number): number {
 
 export default function CalendarScreen() {
   const insets = useSafeAreaInsets();
-  const { isPro, remainingTaps } = useEntitlement();
+  const { isPro, remainingTaps, tappedDays, goldenDay, decrementTap, addTappedDay } = useEntitlement();
 
-  // TODO: Get from storage in Stage 5
-  const goldenDayMonth = 0; // January
-  const goldenDayDate = 31;
-
-  // Calculate today's day of year for top counter
-  const getTodayDayOfYear = () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 1);
-    const diff = now.getTime() - start.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
-  };
+  const goldenDayMonth = goldenDay?.month ?? -1;
+  const goldenDayDate = goldenDay?.date ?? -1;
 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -81,35 +72,29 @@ export default function CalendarScreen() {
     }
   };
 
-  const handleDayPress = (day: number) => {
-    const isGoldenDay = 
-      currentMonth === goldenDayMonth && 
+  const handleDayPress = async (day: number) => {
+    const isGoldenDay =
+      currentMonth === goldenDayMonth &&
       day === goldenDayDate;
-
-    console.log('Day pressed:', day);
-    console.log('Current month:', currentMonth, 'Golden month:', goldenDayMonth);
-    console.log('Clicked day:', day, 'Golden day:', goldenDayDate);
-    console.log('Is golden day?', isGoldenDay);
-
-    if (isGoldenDay) {
-      console.log('Opening Amore modal!');
-      setShowAmoreModal(true);
-      return;
-    }
 
     // Check if user has taps remaining
     if (!isPro && remainingTaps === 0) {
-      console.log('No taps remaining - showing lock modal');
       setShowLockModal(true);
       return;
     }
 
-    // User has taps - show quote
-    console.log('Opening Quote modal');
+    if (isGoldenDay) {
+      setShowAmoreModal(true);
+      return;
+    }
+
+    // User has taps - show quote and track
+    const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const sampleQuote = "I'm washing my hair that night.";
     setCurrentQuote(sampleQuote);
     setShowQuoteModal(true);
-    // TODO: Decrement remaining taps (Phase 3 - Storage)
+    await decrementTap();
+    await addTappedDay(dateKey);
   };
 
   const handleSettingsPress = () => {
@@ -209,7 +194,7 @@ export default function CalendarScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>364</Text>
           <Text style={styles.headerSubtitle}>WAYS TO SAY NO</Text>
-          <Text style={styles.dayCounter}>{getTodayDayOfYear()}/365</Text>
+          <Text style={styles.dayCounter}>{tappedDays.size}/364</Text>
         </View>
 
         {/* Month Navigation */}

@@ -9,14 +9,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import Colors from '@/constants/colors';
+import { useEntitlement } from '@/contexts/EntitlementContext';
 
 export default function PickGoldenDayScreen() {
   const insets = useSafeAreaInsets();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { setGoldenDay } = useEntitlement();
 
-  const handleContinue = () => {
-    // TODO: Save selected date to storage (Stage 5)
-    // For now, just navigate to calendar
+  const handleContinue = async () => {
+    await setGoldenDay(selectedDate.getMonth(), selectedDate.getDate());
     router.replace('/calendar');
   };
 
