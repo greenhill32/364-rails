@@ -21,8 +21,8 @@
   Notes: https://publicbucket3222.blob.core.windows.net/$web/364/terms.html
   ────────────────────────────────────────
   Item: Support email exists & monitored
-  Status: ❌ Not set up
-  Notes: User needs to create/assign one
+  Status: ✅ Done
+  Notes: 364.help@gmail.com
   ---
   2. Technical Setup Checklist
   Item: API keys in env variables
