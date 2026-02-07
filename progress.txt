@@ -21,8 +21,8 @@ Status: ✅ Done
 Notes: https://publicbucket3222.blob.core.windows.net/$web/364/terms.html
 ────────────────────────────────────────
 Item: Support email exists & monitored
-Status: ❌ Not set up
-Notes: User needs to create/assign one
+Status: ✅ Done
+Notes: Support email configured
 ---
 2. Technical Setup Checklist
 Item: API keys in env variables
@@ -135,15 +135,15 @@ Completed today (2026-02-07):
 ✅ Created iOS App Development provisioning profile
 ✅ Created App Store Connect distribution provisioning profile
 ✅ App listing created in App Store Connect
+✅ Support email configured
 
 Remaining blockers:
-1. Support email — user needs to set up
-2. Age rating questionnaire — App Store Connect
-3. Data collection declarations — App Store Connect
-4. Screenshots (at least 3 iPhone) — needs app on device
-5. Error tracking — needs native rebuild
-6. TestFlight testing — needs EAS rebuild
-7. Memory leaks not checked — needs running app
+1. Age rating questionnaire — App Store Connect
+2. Data collection declarations — App Store Connect
+3. Screenshots (at least 3 iPhone) — needs app on device
+4. Error tracking — needs native rebuild
+5. TestFlight testing — needs EAS rebuild
+6. Memory leaks not checked — needs running app
 
 Next steps:
 - Fill in quick App Store Connect metadata (support email, age rating, data collection)
