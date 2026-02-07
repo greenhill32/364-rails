@@ -2,7 +2,7 @@
 // /components/QuoteModal.tsx
 // Quote Modal: Display witty rejection with share option
 // -----------------------------
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Share, Platform } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Pressable, Share, Platform } from 'react-native';
 import { X } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 
@@ -37,14 +37,17 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           {/* Close Button */}
-          <TouchableOpacity
+          <Pressable
             style={styles.closeButton}
             onPress={onClose}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             accessibilityRole="button"
             accessibilityLabel="Close"
           >
-            <X size={24} color={Colors.gold} />
-          </TouchableOpacity>
+            <View pointerEvents="none">
+              <X size={24} color={Colors.gold} />
+            </View>
+          </Pressable>
 
           {/* Top Divider */}
           <View style={styles.divider}>
@@ -110,10 +113,10 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    padding: 8,
-    zIndex: 1,
+    top: 8,
+    right: 8,
+    padding: 14,
+    zIndex: 10,
   },
   divider: {
     flexDirection: 'row',

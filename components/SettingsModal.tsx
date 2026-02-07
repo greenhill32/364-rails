@@ -2,7 +2,7 @@
 // /components/SettingsModal.tsx
 // Settings Modal: Privacy, TOS, Restore Purchases
 // -----------------------------
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Pressable, Linking } from 'react-native';
 import { useState } from 'react';
 import { X } from 'lucide-react-native';
 import Colors from '@/constants/colors';
@@ -14,7 +14,7 @@ type SettingsModalProps = {
 };
 
 export function SettingsModal({ visible, onClose }: SettingsModalProps) {
-  const { restore } = useEntitlement();
+  const { restore, isPro, devTogglePro } = useEntitlement();
   const [isRestoring, setIsRestoring] = useState(false);
 
   const handleRestore = async () => {
@@ -46,14 +46,17 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           {/* Close Button */}
-          <TouchableOpacity
+          <Pressable
             style={styles.closeButton}
             onPress={onClose}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             accessibilityRole="button"
             accessibilityLabel="Close settings"
           >
-            <X size={24} color={Colors.gold} />
-          </TouchableOpacity>
+            <View pointerEvents="none">
+              <X size={24} color={Colors.gold} />
+            </View>
+          </Pressable>
 
           {/* Title */}
           <Text style={styles.title}>Settings</Text>
@@ -100,6 +103,22 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
           {/* Divider */}
           <View style={styles.divider} />
 
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Dev Toggle Pro (Hidden in production) */}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={devTogglePro}
+            accessibilityRole="button"
+            accessibilityLabel="Toggle pro status"
+          >
+            <Text style={[styles.menuItemText, { fontSize: 12, opacity: 0.6 }]}>
+              [DEV] {isPro ? 'Unpaid' : 'Paid'}
+            </Text>
+            <Text style={styles.menuItemChevron}>›</Text>
+          </TouchableOpacity>
+
           {/* App Version */}
           <View style={styles.versionContainer}>
             <Text style={styles.versionText}>Version 1.0.0</Text>
@@ -132,8 +151,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     right: 12,
-    padding: 8,
-    zIndex: 1,
+    padding: 12,
+    zIndex: 10,
   },
   title: {
     fontSize: 24,

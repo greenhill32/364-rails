@@ -8,14 +8,17 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
   ScrollView,
   Dimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Settings } from 'lucide-react-native';
+import { router } from 'expo-router';
 import Colors from '@/constants/colors';
 import { useEntitlement } from '@/contexts/EntitlementContext';
+import { QUOTES_364 } from '@/constants/quotes';
 import { QuoteModal } from '../components/QuoteModal';
 import { AmoreModal } from '../components/AmoreModal';
 import { LockModal } from '../components/LockModal';
@@ -53,6 +56,7 @@ export default function CalendarScreen() {
   const [showAmoreModal, setShowAmoreModal] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [freeQuoteIndex, setFreeQuoteIndex] = useState(0);
 
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
@@ -77,7 +81,12 @@ export default function CalendarScreen() {
       currentMonth === goldenDayMonth &&
       day === goldenDayDate;
 
-    // Check if user has taps remaining
+    // Check paywall: golden day requires pro, regular days need taps
+    if (isGoldenDay && !isPro) {
+      setShowLockModal(true);
+      return;
+    }
+
     if (!isPro && remainingTaps === 0) {
       setShowLockModal(true);
       return;
@@ -90,8 +99,18 @@ export default function CalendarScreen() {
 
     // User has taps - show quote and track
     const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const sampleQuote = "I'm washing my hair that night.";
-    setCurrentQuote(sampleQuote);
+
+    let quote: string;
+    if (isPro) {
+      // Pro users get random from unlocked
+      quote = QUOTES_364.unlocked[Math.floor(Math.random() * QUOTES_364.unlocked.length)];
+    } else {
+      // Free users cycle through the 3 free quotes
+      quote = QUOTES_364.free[freeQuoteIndex];
+      setFreeQuoteIndex((freeQuoteIndex + 1) % QUOTES_364.free.length);
+    }
+
+    setCurrentQuote(quote);
     setShowQuoteModal(true);
     await decrementTap();
     await addTappedDay(dateKey);
@@ -102,8 +121,7 @@ export default function CalendarScreen() {
   };
 
   const handleChangeLuckyDay = () => {
-    // TODO: Stage 6 - Navigate back to pick-golden-day
-    console.log('Change lucky day');
+    router.push('/pick-golden-day');
   };
 
   const closeQuoteModal = () => {
@@ -183,15 +201,21 @@ export default function CalendarScreen() {
       <StatusBar style="light" />
 
       <View style={[styles.content, { paddingTop: insets.top + 20 }]}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
+        {/* Settings Button */}
+        <View style={styles.settingsRow}>
+          <Pressable
             style={styles.settingsButton}
             onPress={handleSettingsPress}
-            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Settings size={24} color={Colors.gold} />
-          </TouchableOpacity>
+            <View pointerEvents="none">
+              <Settings size={24} color={Colors.gold} />
+            </View>
+          </Pressable>
+        </View>
+
+        {/* Header */}
+        <View style={styles.header}>
           <Text style={styles.headerTitle}>364</Text>
           <Text style={styles.headerSubtitle}>WAYS TO SAY NO</Text>
           <Text style={styles.dayCounter}>{tappedDays.size}/364</Text>
@@ -287,16 +311,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
   },
+  settingsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  settingsButton: {
+    padding: 8,
+  },
   header: {
     alignItems: 'center',
     marginBottom: 20,
-    position: 'relative',
-  },
-  settingsButton: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    padding: 8,
   },
   headerTitle: {
     fontSize: 48,

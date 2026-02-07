@@ -46,6 +46,7 @@ type EntitlementState = {
   decrementTap: () => Promise<void>;
   addTappedDay: (dateKey: string) => Promise<void>;
   setGoldenDay: (month: number, date: number) => Promise<void>;
+  devTogglePro: () => void;
 };
 
 const EntitlementContext = createContext<EntitlementState>({
@@ -59,6 +60,7 @@ const EntitlementContext = createContext<EntitlementState>({
   decrementTap: async () => {},
   addTappedDay: async () => {},
   setGoldenDay: async () => {},
+  devTogglePro: () => {},
 });
 
 export function useEntitlement() {
@@ -200,6 +202,15 @@ export function EntitlementProvider({ children }: Props) {
     }
   };
 
+  const devTogglePro = () => {
+    setIsPro(!isPro);
+    if (!isPro) {
+      setRemainingTaps(Infinity);
+    } else {
+      setRemainingTaps(3);
+    }
+  };
+
   const value: EntitlementState = {
     isPro,
     isLoading,
@@ -211,6 +222,7 @@ export function EntitlementProvider({ children }: Props) {
     decrementTap,
     addTappedDay,
     setGoldenDay,
+    devTogglePro,
   };
 
   return (

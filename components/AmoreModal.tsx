@@ -2,7 +2,7 @@
 // /components/AmoreModal.tsx
 // Amore Modal: Golden day special screen
 // -----------------------------
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Pressable, Image } from 'react-native';
 import { X } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 
@@ -22,20 +22,23 @@ export function AmoreModal({ visible, onClose }: AmoreModalProps) {
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           {/* Close Button */}
-          <TouchableOpacity
+          <Pressable
             style={styles.closeButton}
             onPress={onClose}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             accessibilityRole="button"
             accessibilityLabel="Close"
           >
-            <X size={28} color={Colors.gold} />
-          </TouchableOpacity>
+            <View pointerEvents="none">
+              <X size={28} color={Colors.gold} />
+            </View>
+          </Pressable>
 
           {/* Wink GIF */}
           <Image
             source={require('../assets/images/wink.gif')}
             style={styles.winkGif}
-            resizeMode="contain"
+            resizeMode="cover"
           />
 
           {/* Top Divider */}
@@ -82,31 +85,33 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 20,
   },
   modalContainer: {
     backgroundColor: Colors.backgroundDark,
     borderRadius: 24,
-    padding: 40,
-    width: '95%',
+    padding: 60,
+    width: '100%',
     maxWidth: 380,
     borderWidth: 2,
     borderColor: Colors.gold,
     position: 'relative',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   closeButton: {
     position: 'absolute',
-    top: 16,
-    right: 16,
-    padding: 8,
-    zIndex: 1,
+    top: 12,
+    right: 12,
+    padding: 12,
+    zIndex: 10,
   },
   winkGif: {
-    width: '100%',         // Full width of modal
-    height: 280,           // ADJUST THIS: Increase/decrease height (try 250-350)
-    marginBottom: 20,
-    marginTop: 10,
+    width: '100%',
+    height: 380,
+    marginBottom: 16,
+    marginTop: 8,
+    borderRadius: 12,
   },
   divider: {
     flexDirection: 'row',

@@ -41,7 +41,7 @@ export default function AboutScreen() {
               <View style={styles.featureIcon}>
                 <Calendar size={24} color={Colors.gold} />
               </View>
-              <Text style={styles.featureText}>Tap any day for inspiration~</Text>
+              <Text style={styles.featureText}>Tap any day for inspiration</Text>
             </View>
 
             <View style={styles.featureItem}>
