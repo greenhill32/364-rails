@@ -22,7 +22,7 @@ Notes: https://publicbucket3222.blob.core.windows.net/$web/364/terms.html
 ────────────────────────────────────────
 Item: Support email exists & monitored
 Status: ✅ Done
-Notes: Support email configured
+Notes: 364.support@gmail.com
 ---
 2. Technical Setup Checklist
 Item: API keys in env variables
@@ -58,6 +58,12 @@ Item: Bug fixes — golden day paywall, day counter, tap decrement
 Status: ✅ Done
 Notes: Paywall check runs before golden day, counter shows real
        tapped count, taps decrement and track correctly
+────────────────────────────────────────
+Item: Quote tracking & premature golden day screen
+Status: ✅ Done (2026-02-07)
+Notes: Pro users get unique quotes from 361 unlocked (no repeats until reset).
+       Premature screen shows when golden day tapped <5 taps.
+       Quote array trimmed to exactly 364 total (3 free + 361 unlocked)
 ---
 3. Legal & Compliance Checklist
 Item: Privacy Policy hosted & linked
@@ -135,25 +141,31 @@ Completed today (2026-02-07):
 ✅ Created iOS App Development provisioning profile
 ✅ Created App Store Connect distribution provisioning profile
 ✅ App listing created in App Store Connect
-✅ Support email configured
 
 Remaining blockers:
-1. Age rating questionnaire — App Store Connect
-2. Data collection declarations — App Store Connect
-3. Screenshots (at least 3 iPhone) — needs app on device
-4. Error tracking — needs native rebuild
-5. TestFlight testing — needs EAS rebuild
-6. Memory leaks not checked — needs running app
+1. Support email — user needs to set up
+2. Age rating questionnaire — App Store Connect
+3. Data collection declarations — App Store Connect
+4. Screenshots (at least 3 iPhone) — needs app on device
+5. Error tracking — needs native rebuild
+6. TestFlight testing — needs EAS rebuild
+7. Memory leaks not checked — needs running app
 
 Next steps:
-- Fill in App Store Connect metadata (age rating, data collection)
+- Fill in quick App Store Connect metadata (support email, age rating, data collection)
+- Fix remaining TODO bugs in code
 - Plan EAS rebuild for native modules (SecureStore, etc.)
-- Capture screenshots on device
 
 ---
-TODO (Code bugs to fix):
-✅ settings button - improved hit area (padding: 12, zIndex: 10)
-✅ gold day is clickable without paying - paywall check now runs first (isPro required)
-✅ on gold day there is black border top and bottom of gif - added overflow: hidden + borderRadius
-✅ x close button not working on gold day - improved hit area (padding: 12, zIndex: 10)
-✅ change lucky day button not working - implemented navigation to pick-golden-day
+TODO (Code bugs fixed - 2026-02-07):
+✅ Settings cog now working (changed TouchableOpacity → Pressable, wrapped icon in View with pointerEvents="none")
+✅ Quote modal close X now working (same fix as settings cog)
+✅ Amore modal close X now working (same fix)
+✅ AmoreModal GIF sizing improved (removed top black bar, adjusted padding)
+
+---
+TODO (Code features added - 2026-02-07):
+✅ Quote tracking — Pro users get unique quotes, no repeats until all 361 used then reset
+✅ Premature golden day screen — Shows when <5 regular taps, user can continue or go back
+✅ Quote array trimmed — Exactly 364 total quotes (3 free + 361 unlocked)
+⏳ Replace prem.gif placeholder with actual GIF asset

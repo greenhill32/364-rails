@@ -368,7 +368,7 @@ export const QUOTES_364 = {
   "Not tonight \u2014 I\u2019m in the middle of a very heated argument with the television.",
   "I can't \u2014 something's riding up and the solution requires removal and I'm staying home.",
   "The guinea pig just stared at me like I owe him money.",
-  "Not tonight \u2014 something's happening with my hormones that's making me emotional and unpredictable."
+  "I can't \u2014 something's riding up and the solution requires removal and I'm staying home."
 ]
 };
 

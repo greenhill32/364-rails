@@ -23,6 +23,7 @@ import { QuoteModal } from '../components/QuoteModal';
 import { AmoreModal } from '../components/AmoreModal';
 import { LockModal } from '../components/LockModal';
 import { SettingsModal } from '../components/SettingsModal';
+import { PrematureModal } from '../components/PrematureModal';
 
 const { width } = Dimensions.get('window');
 const DAY_SIZE = (width - 60) / 7;
@@ -44,7 +45,7 @@ function getFirstDayOfMonth(month: number, year: number): number {
 
 export default function CalendarScreen() {
   const insets = useSafeAreaInsets();
-  const { isPro, remainingTaps, tappedDays, goldenDay, decrementTap, addTappedDay } = useEntitlement();
+  const { isPro, remainingTaps, tappedDays, goldenDay, decrementTap, addTappedDay, getNextQuote } = useEntitlement();
 
   const goldenDayMonth = goldenDay?.month ?? -1;
   const goldenDayDate = goldenDay?.date ?? -1;
@@ -56,6 +57,7 @@ export default function CalendarScreen() {
   const [showAmoreModal, setShowAmoreModal] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showPrematureModal, setShowPrematureModal] = useState(false);
   const [freeQuoteIndex, setFreeQuoteIndex] = useState(0);
 
   const handlePrevMonth = () => {
@@ -93,21 +95,21 @@ export default function CalendarScreen() {
     }
 
     if (isGoldenDay) {
-      setShowAmoreModal(true);
+      // Check if premature (less than 5 taps)
+      if (tappedDays.size < 5) {
+        setShowPrematureModal(true);
+      } else {
+        setShowAmoreModal(true);
+      }
       return;
     }
 
     // User has taps - show quote and track
     const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-    let quote: string;
-    if (isPro) {
-      // Pro users get random from unlocked
-      quote = QUOTES_364.unlocked[Math.floor(Math.random() * QUOTES_364.unlocked.length)];
-    } else {
-      // Free users cycle through the 3 free quotes
-      quote = QUOTES_364.free[freeQuoteIndex];
-      setFreeQuoteIndex((freeQuoteIndex + 1) % QUOTES_364.free.length);
+    const { quote, newIndex } = getNextQuote(isPro, freeQuoteIndex);
+    if (newIndex !== undefined) {
+      setFreeQuoteIndex(newIndex);
     }
 
     setCurrentQuote(quote);
@@ -131,6 +133,15 @@ export default function CalendarScreen() {
 
   const closeAmoreModal = () => {
     setShowAmoreModal(false);
+  };
+
+  const handleContinueToGolden = () => {
+    setShowPrematureModal(false);
+    setShowAmoreModal(true);
+  };
+
+  const handleBackToCalendar = () => {
+    setShowPrematureModal(false);
   };
 
   const handlePurchase = () => {
@@ -297,6 +308,13 @@ export default function CalendarScreen() {
       <SettingsModal
         visible={showSettingsModal}
         onClose={closeSettingsModal}
+      />
+
+      {/* Premature Modal */}
+      <PrematureModal
+        visible={showPrematureModal}
+        onContinueToGolden={handleContinueToGolden}
+        onBackToCalendar={handleBackToCalendar}
       />
     </View>
   );

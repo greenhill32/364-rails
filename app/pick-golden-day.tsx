@@ -33,10 +33,12 @@ export default function PickGoldenDayScreen() {
           <View style={styles.decorativeLine} />
         </View>
 
-        <Text style={styles.description}>
-          Pick one special day of the year{'\n'}
-          for amore instead of excuses.
-        </Text>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>
+            Pick one special day of the year to say{' '}
+          </Text>
+          <Text style={[styles.description, styles.bold]}>Yes instead of no</Text>
+        </View>
 
         <View style={styles.pickerContainer}>
           <DateTimePicker
@@ -107,13 +109,26 @@ const styles = StyleSheet.create({
     marginTop: -5,
     fontFamily: 'Didot',
   },
-  description: {
-    fontSize: 16,
-    color: Colors.cream,
-    textAlign: 'center',
-    lineHeight: 24,
+  descriptionContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     marginBottom: 20,
+  },
+  description: {
+    fontSize: 21,
+    fontWeight: '600',
+    color: Colors.gold,
+    textAlign: 'center',
+    lineHeight: 28,
     opacity: 0.9,
+    fontFamily: 'Didot',
+    fontStyle: 'italic',
+  },
+  bold: {
+    fontWeight: '600',
+    color: Colors.gold,
+    opacity: 1,
   },
   pickerContainer: {
     flex: 1,

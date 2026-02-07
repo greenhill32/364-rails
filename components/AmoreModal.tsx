@@ -142,12 +142,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Didot',
   },
   subtitle: {
-    fontSize: 16,
-    color: Colors.cream,
+    fontSize: 21,
+    color: Colors.gold,
     textAlign: 'center',
-    opacity: 0.9,
+    opacity: 1,
     marginTop: 8,
     fontStyle: 'italic',
+    fontFamily: 'Didot',
+    fontWeight: '700',
   },
   doneButton: {
     backgroundColor: Colors.gold,

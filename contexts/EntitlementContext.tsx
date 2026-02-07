@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Purchases from 'react-native-purchases';
 import Constants from 'expo-constants';
+import { QUOTES_364 } from '@/constants/quotes';
 
 const STORAGE_KEYS = {
   REMAINING_TAPS: '@364_remainingTaps',
   TAPPED_DAYS: '@364_tappedDays',
   GOLDEN_DAY: '@364_goldenDay',
+  USED_QUOTE_INDICES: '@364_usedQuoteIndices',
 };
 
 // Graceful storage wrapper — uses SecureStore when available, falls back to in-memory
@@ -41,12 +43,14 @@ type EntitlementState = {
   remainingTaps: number;
   tappedDays: Set<string>;
   goldenDay: GoldenDay;
+  usedQuoteIndices: Set<number>;
   purchase: () => Promise<void>;
   restore: () => Promise<void>;
   decrementTap: () => Promise<void>;
   addTappedDay: (dateKey: string) => Promise<void>;
   setGoldenDay: (month: number, date: number) => Promise<void>;
   devTogglePro: () => void;
+  getNextQuote: (isPro: boolean, freeQuoteIndex: number) => { quote: string; newIndex?: number };
 };
 
 const EntitlementContext = createContext<EntitlementState>({
@@ -55,12 +59,14 @@ const EntitlementContext = createContext<EntitlementState>({
   remainingTaps: 3,
   tappedDays: new Set(),
   goldenDay: null,
+  usedQuoteIndices: new Set(),
   purchase: async () => {},
   restore: async () => {},
   decrementTap: async () => {},
   addTappedDay: async () => {},
   setGoldenDay: async () => {},
   devTogglePro: () => {},
+  getNextQuote: () => ({ quote: '' }),
 });
 
 export function useEntitlement() {
@@ -77,6 +83,7 @@ export function EntitlementProvider({ children }: Props) {
   const [remainingTaps, setRemainingTaps] = useState(3);
   const [tappedDays, setTappedDays] = useState<Set<string>>(new Set());
   const [goldenDay, setGoldenDayState] = useState<GoldenDay>(null);
+  const [usedQuoteIndices, setUsedQuoteIndices] = useState<Set<number>>(new Set());
 
   // Load persisted state and configure RevenueCat on mount
   useEffect(() => {
@@ -95,10 +102,11 @@ export function EntitlementProvider({ children }: Props) {
 
   const loadPersistedState = async () => {
     try {
-      const [storedTaps, storedDays, storedGolden] = await Promise.all([
+      const [storedTaps, storedDays, storedGolden, storedUsedQuotes] = await Promise.all([
         storage.getItem(STORAGE_KEYS.REMAINING_TAPS),
         storage.getItem(STORAGE_KEYS.TAPPED_DAYS),
         storage.getItem(STORAGE_KEYS.GOLDEN_DAY),
+        storage.getItem(STORAGE_KEYS.USED_QUOTE_INDICES),
       ]);
 
       if (storedTaps !== null) {
@@ -111,6 +119,10 @@ export function EntitlementProvider({ children }: Props) {
 
       if (storedGolden !== null) {
         setGoldenDayState(JSON.parse(storedGolden));
+      }
+
+      if (storedUsedQuotes !== null) {
+        setUsedQuoteIndices(new Set(JSON.parse(storedUsedQuotes)));
       }
     } catch (error) {
       console.error('Failed to load persisted state:', error);
@@ -211,18 +223,56 @@ export function EntitlementProvider({ children }: Props) {
     }
   };
 
+  const getNextQuote = (isPro: boolean, freeQuoteIndex: number): { quote: string; newIndex?: number } => {
+    if (!isPro) {
+      // Free users cycle through 3 free quotes
+      const quote = QUOTES_364.free[freeQuoteIndex];
+      const newIndex = (freeQuoteIndex + 1) % QUOTES_364.free.length;
+      return { quote, newIndex };
+    }
+
+    // Pro users: get random quote from unused ones
+    const unlockedQuotes = QUOTES_364.unlocked;
+    const availableIndices: number[] = [];
+
+    for (let i = 0; i < unlockedQuotes.length; i++) {
+      if (!usedQuoteIndices.has(i)) {
+        availableIndices.push(i);
+      }
+    }
+
+    // If all quotes used, reset
+    if (availableIndices.length === 0) {
+      setUsedQuoteIndices(new Set());
+      availableIndices.push(...Array.from({ length: unlockedQuotes.length }, (_, i) => i));
+    }
+
+    // Pick random from available
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    const newUsedIndices = new Set(usedQuoteIndices);
+    newUsedIndices.add(randomIndex);
+    setUsedQuoteIndices(newUsedIndices);
+
+    // Persist
+    storage.setItem(STORAGE_KEYS.USED_QUOTE_INDICES, JSON.stringify([...newUsedIndices]));
+
+    return { quote: unlockedQuotes[randomIndex] };
+  };
+
   const value: EntitlementState = {
     isPro,
     isLoading,
     remainingTaps,
     tappedDays,
     goldenDay,
+    usedQuoteIndices,
     purchase,
     restore,
     decrementTap,
     addTappedDay,
     setGoldenDay,
     devTogglePro,
+    getNextQuote,
   };
 
   return (
