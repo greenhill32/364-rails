@@ -146,9 +146,9 @@ Remaining blockers:
 6. Memory leaks not checked — needs running app
 
 Next steps:
-- Fill in quick App Store Connect metadata (support email, age rating, data collection)
-- Fix remaining TODO bugs in code
+- Fill in App Store Connect metadata (age rating, data collection)
 - Plan EAS rebuild for native modules (SecureStore, etc.)
+- Capture screenshots on device
 
 ---
 TODO (Code bugs to fix):
