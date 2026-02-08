@@ -37,7 +37,7 @@ export function PrematureModal({ visible, onContinueToGolden, onBackToCalendar }
 
           {/* Premature GIF */}
           <Image
-            source={require('../assets/images/prem.gif')}
+            source={require('../assets/images/prem.jpg')}
             style={styles.gifImage}
             resizeMode="cover"
           />
