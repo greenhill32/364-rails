@@ -70,7 +70,7 @@ export default function AboutScreen() {
           </TouchableOpacity>
 
           <Text style={styles.footerText}>
-            Elegantly decline, every single time.
+            Elegantly decline, almost every time.
           </Text>
         </View>
       </View>

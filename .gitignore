@@ -16,3 +16,28 @@ android/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Security: Certificate & Key Files (NEVER COMMIT)
+*.cer
+*.key
+*.p12
+*.mobileprovision
+*.csr
+CertificateSigningRequest.csr
+
+# Sensitive files
+CLAUDE*.md
+launch-checklist.txt
+notes/
+secrets/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.thumbs.db

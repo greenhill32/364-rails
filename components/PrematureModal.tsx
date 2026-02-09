@@ -39,11 +39,11 @@ export function PrematureModal({ visible, onContinueToGolden, onBackToCalendar }
           <Image
             source={require('../assets/images/prem.png')}
             style={styles.gifImage}
-            resizeMode="cover"
+            resizeMode="contain"
           />
 
           {/* Title */}
-          <Text style={styles.title}>A Bit Premature...</Text>
+          <Text style={styles.title}>A bit premature...</Text>
 
           {/* Subtitle */}
           <Text style={styles.subtitle}>

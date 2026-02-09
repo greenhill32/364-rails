@@ -45,6 +45,13 @@ Item: Third-party SDKs approved/maintained
 Status: ✅ Likely fine
 Notes: RevenueCat, Expo — all current
 ────────────────────────────────────────
+Item: RevenueCat configuration & testing
+Status: ✅ Done (2026-02-08)
+Notes: Fixed entitlement key (was "364 Ways to Say No Pro" → "pro")
+       Products (monthly, yearly, lifetime) linked to 'pro' entitlement
+       Test purchase flow verified via test store — works end-to-end
+       Customer entitlements resolving correctly
+────────────────────────────────────────
 Item: Memory leaks checked
 Status: ❌ Not done
 Notes:
@@ -132,7 +139,7 @@ Item: Push notifications
 Status: ✅ N/A
 Notes: Not using them
 ---
-Summary: 🟡 IN PROGRESS
+Summary: 🟢 MOSTLY COMPLETE — RevenueCat working, App Store metadata pending
 
 Completed today (2026-02-07):
 ✅ Bundle ID registered in Apple Developer (com.greenhill32.364waystosayno)
@@ -142,14 +149,20 @@ Completed today (2026-02-07):
 ✅ Created App Store Connect distribution provisioning profile
 ✅ App listing created in App Store Connect
 
+Completed today (2026-02-08):
+✅ RevenueCat entitlement key fixed ("pro" was mismatched)
+✅ Products linked to 'pro' entitlement (monthly, yearly, lifetime)
+✅ Test purchase flow verified — end-to-end working
+✅ Entitlements resolving correctly post-purchase
+✅ Dashboard metrics showing test customers & transactions
+
 Remaining blockers:
-1. Support email — user needs to set up
-2. Age rating questionnaire — App Store Connect
-3. Data collection declarations — App Store Connect
-4. Screenshots (at least 3 iPhone) — needs app on device
-5. Error tracking — needs native rebuild
-6. TestFlight testing — needs EAS rebuild
-7. Memory leaks not checked — needs running app
+1. Age rating questionnaire — App Store Connect
+2. Data collection declarations — App Store Connect
+3. Screenshots (at least 3 iPhone) — needs app on device
+4. Error tracking (Sentry) — needs native rebuild
+5. TestFlight testing — needs EAS rebuild with SecureStore
+6. Memory leaks not checked — needs running app
 
 Next steps:
 - Fill in quick App Store Connect metadata (support email, age rating, data collection)
