@@ -1,6 +1,30 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
 import { Quote } from '@/constants/quotes';
+
+// Graceful storage wrapper — uses SecureStore when available, falls back to in-memory
+let SecureStoreModule: typeof import('expo-secure-store') | null = null;
+try {
+  SecureStoreModule = require('expo-secure-store');
+} catch {
+  console.warn('FavoritesContext: SecureStore not available — using in-memory storage');
+}
+
+const storage = {
+  getItem: async (key: string): Promise<string | null> => {
+    try {
+      return SecureStoreModule ? await SecureStoreModule.getItemAsync(key) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: async (key: string, value: string): Promise<void> => {
+    try {
+      if (SecureStoreModule) await SecureStoreModule.setItemAsync(key, value);
+    } catch {
+      // Silently fail — in-memory state still works
+    }
+  },
+};
 
 export interface FavoriteAnalytics {
   quoteId: string;
@@ -20,8 +44,8 @@ interface FavoritesContextType {
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
-const FAVORITES_STORAGE_KEY = 'favorites_list';
-const ANALYTICS_STORAGE_KEY = 'favorites_analytics';
+const FAVORITES_STORAGE_KEY = '@364_favorites_list';
+const ANALYTICS_STORAGE_KEY = '@364_favorites_analytics';
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -30,12 +54,14 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   );
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load from SecureStore on mount
+  // Load from storage on mount
   useEffect(() => {
     const loadFavorites = async () => {
       try {
-        const favoritesJson = await SecureStore.getItemAsync(FAVORITES_STORAGE_KEY);
-        const analyticsJson = await SecureStore.getItemAsync(ANALYTICS_STORAGE_KEY);
+        const [favoritesJson, analyticsJson] = await Promise.all([
+          storage.getItem(FAVORITES_STORAGE_KEY),
+          storage.getItem(ANALYTICS_STORAGE_KEY),
+        ]);
 
         if (favoritesJson) {
           setFavorites(new Set(JSON.parse(favoritesJson)));
@@ -59,19 +85,14 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveFavorites = async (newFavorites: Set<string>, newAnalytics: Map<string, FavoriteAnalytics>) => {
-    try {
-      await SecureStore.setItemAsync(
-        FAVORITES_STORAGE_KEY,
-        JSON.stringify(Array.from(newFavorites))
-      );
-
-      await SecureStore.setItemAsync(
-        ANALYTICS_STORAGE_KEY,
-        JSON.stringify(Array.from(newAnalytics.values()))
-      );
-    } catch (error) {
-      console.error('Error saving favorites:', error);
-    }
+    await storage.setItem(
+      FAVORITES_STORAGE_KEY,
+      JSON.stringify(Array.from(newFavorites))
+    );
+    await storage.setItem(
+      ANALYTICS_STORAGE_KEY,
+      JSON.stringify(Array.from(newAnalytics.values()))
+    );
   };
 
   const toggleFavorite = async (quote: Quote) => {
