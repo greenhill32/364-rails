@@ -4,11 +4,13 @@
 // -----------------------------
 import { Stack } from 'expo-router';
 import { EntitlementProvider } from '@/contexts/EntitlementContext';
+import { FavoritesProvider } from '@/contexts/FavoritesContext';
 
 export default function RootLayout() {
   return (
     <EntitlementProvider>
-      <Stack
+      <FavoritesProvider>
+        <Stack
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: '#4a1942' }, // Plum background
@@ -40,6 +42,7 @@ export default function RootLayout() {
         }}
       />
       </Stack>
+      </FavoritesProvider>
     </EntitlementProvider>
   );
 }

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Purchases from 'react-native-purchases';
 import Constants from 'expo-constants';
-import { QUOTES_364 } from '@/constants/quotes';
+import { QUOTES_364, getAllQuotes, Quote } from '@/constants/quotes';
 
 const STORAGE_KEYS = {
   REMAINING_TAPS: '@364_remainingTaps',
@@ -50,7 +50,7 @@ type EntitlementState = {
   addTappedDay: (dateKey: string) => Promise<void>;
   setGoldenDay: (month: number, date: number) => Promise<void>;
   devTogglePro: () => void;
-  getNextQuote: (isPro: boolean, freeQuoteIndex: number) => { quote: string; newIndex?: number };
+  getNextQuote: (isPro: boolean, freeQuoteIndex: number) => { quote: Quote; newIndex?: number };
 };
 
 const EntitlementContext = createContext<EntitlementState>({
@@ -66,7 +66,7 @@ const EntitlementContext = createContext<EntitlementState>({
   addTappedDay: async () => {},
   setGoldenDay: async () => {},
   devTogglePro: () => {},
-  getNextQuote: () => ({ quote: '' }),
+  getNextQuote: () => ({ quote: { id: '', text: '', rating: 0 as 0 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 } }),
 });
 
 export function useEntitlement() {
@@ -223,7 +223,7 @@ export function EntitlementProvider({ children }: Props) {
     }
   };
 
-  const getNextQuote = (isPro: boolean, freeQuoteIndex: number): { quote: string; newIndex?: number } => {
+  const getNextQuote = (isPro: boolean, freeQuoteIndex: number): { quote: Quote; newIndex?: number } => {
     if (!isPro) {
       // Free users cycle through 3 free quotes
       const quote = QUOTES_364.free[freeQuoteIndex];
@@ -231,11 +231,12 @@ export function EntitlementProvider({ children }: Props) {
       return { quote, newIndex };
     }
 
-    // Pro users: get random quote from unused ones
-    const unlockedQuotes = QUOTES_364.unlocked;
+    // Pro users: get random quote from all unlocked quotes (ratings 3-10)
+    const allQuotes = getAllQuotes();
+    const paidQuotes = allQuotes.filter(q => q.rating >= 3); // All rated quotes are paid
     const availableIndices: number[] = [];
 
-    for (let i = 0; i < unlockedQuotes.length; i++) {
+    for (let i = 0; i < paidQuotes.length; i++) {
       if (!usedQuoteIndices.has(i)) {
         availableIndices.push(i);
       }
@@ -244,7 +245,7 @@ export function EntitlementProvider({ children }: Props) {
     // If all quotes used, reset
     if (availableIndices.length === 0) {
       setUsedQuoteIndices(new Set());
-      availableIndices.push(...Array.from({ length: unlockedQuotes.length }, (_, i) => i));
+      availableIndices.push(...Array.from({ length: paidQuotes.length }, (_, i) => i));
     }
 
     // Pick random from available
@@ -256,7 +257,7 @@ export function EntitlementProvider({ children }: Props) {
     // Persist
     storage.setItem(STORAGE_KEYS.USED_QUOTE_INDICES, JSON.stringify([...newUsedIndices]));
 
-    return { quote: unlockedQuotes[randomIndex] };
+    return { quote: paidQuotes[randomIndex] };
   };
 
   const value: EntitlementState = {

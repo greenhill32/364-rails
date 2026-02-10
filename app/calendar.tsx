@@ -18,7 +18,7 @@ import { Settings } from 'lucide-react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
 import { useEntitlement } from '@/contexts/EntitlementContext';
-import { QUOTES_364 } from '@/constants/quotes';
+import { QUOTES_364, Quote } from '@/constants/quotes';
 import { QuoteModal } from '../components/QuoteModal';
 import { AmoreModal } from '../components/AmoreModal';
 import { LockModal } from '../components/LockModal';
@@ -53,7 +53,7 @@ export default function CalendarScreen() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [showQuoteModal, setShowQuoteModal] = useState(false);
-  const [currentQuote, setCurrentQuote] = useState<string | null>(null);
+  const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [showAmoreModal, setShowAmoreModal] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);

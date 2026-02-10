@@ -1,14 +1,16 @@
 // -----------------------------
 // /components/QuoteModal.tsx
-// Quote Modal: Display witty rejection with share option
+// Quote Modal: Display witty rejection with share & favorite options
 // -----------------------------
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Pressable, Share, Platform } from 'react-native';
 import { X } from 'lucide-react-native';
+import { Quote } from '@/constants/quotes';
 import Colors from '@/constants/colors';
+import { FavoriteHeartButton } from './FavoriteHeartButton';
 
 type QuoteModalProps = {
   visible: boolean;
-  quote: string | null;
+  quote: Quote | null;
   onClose: () => void;
 };
 
@@ -18,7 +20,7 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
 
     try {
       await Share.share({
-        message: `"${quote}"\n\n— 364 Ways to Say No`,
+        message: `"${quote.text}"\n\n— 364 Ways to Say No`,
       });
     } catch (error) {
       console.error('Share failed:', error);
@@ -35,6 +37,11 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
+        {/* Heart Button - Mid page right */}
+        <View style={styles.heartContainer}>
+          <FavoriteHeartButton quote={quote} />
+        </View>
+
         <View style={styles.modalContainer}>
           {/* Close Button */}
           <Pressable
@@ -57,7 +64,7 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
           </View>
 
           {/* Quote Text */}
-          <Text style={styles.quoteText}>"{quote}"</Text>
+          <Text style={styles.quoteText}>"{quote.text}"</Text>
 
           {/* Bottom Divider */}
           <View style={styles.divider}>
@@ -100,6 +107,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  heartContainer: {
+    position: 'absolute',
+    right: 20,
+    top: '50%',
+    transform: [{ translateY: -16 }], // Center vertically
+    zIndex: 100,
   },
   modalContainer: {
     backgroundColor: Colors.backgroundDark,
