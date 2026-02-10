@@ -37,11 +37,6 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        {/* Heart Button - Mid page right */}
-        <View style={styles.heartContainer}>
-          <FavoriteHeartButton quote={quote} />
-        </View>
-
         <View style={styles.modalContainer}>
           {/* Close Button */}
           <Pressable
@@ -94,6 +89,11 @@ export function QuoteModal({ visible, quote, onClose }: QuoteModalProps) {
           >
             <Text style={styles.notedButtonText}>Noted</Text>
           </TouchableOpacity>
+
+          {/* Heart Button */}
+          <View style={styles.heartRow}>
+            <FavoriteHeartButton quote={quote} />
+          </View>
         </View>
       </View>
     </Modal>
@@ -108,13 +108,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  heartContainer: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-    transform: [{ translateY: -16 }], // Center vertically
-    zIndex: 100,
-  },
   modalContainer: {
     backgroundColor: Colors.backgroundDark,
     borderRadius: 20,
@@ -123,7 +116,6 @@ const styles = StyleSheet.create({
     maxWidth: 340,
     borderWidth: 1,
     borderColor: Colors.border,
-    position: 'relative',
   },
   closeButton: {
     position: 'absolute',
@@ -182,6 +174,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignSelf: 'center',
     marginTop: 16,
+  },
+  heartRow: {
+    alignItems: 'center',
+    marginTop: 8,
   },
   notedButtonText: {
     fontSize: 16,
