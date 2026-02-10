@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>364 Ways to Say No</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --plum: #4a1942;
+            --plum-dark: #2d0f28;
+            --plum-light: #6b2a5f;
+            --gold: #d4a853;
+            --gold-light: #e8c97a;
+            --gold-pale: #f5e6c8;
+            --cream: #faf6f0;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(180deg, var(--plum-dark) 0%, var(--plum) 50%, var(--plum-dark) 100%);
+            min-height: 100vh;
+            color: var(--gold-pale);
+            overflow-x: hidden;
+        }
+
+        /* Texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Art Deco decorative elements */
+        .deco-line {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 20px 0;
+        }
+
+        .deco-diamond {
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            margin: 0 auto;
+        }
+
+        /* Curtain frame effect */
+        .curtain-left, .curtain-right {
+            position: fixed;
+            top: 0;
+            width: 80px;
+            height: 100%;
+            background: linear-gradient(90deg, var(--plum-dark), transparent);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .curtain-left {
+            left: 0;
+            border-right: 3px solid var(--gold);
+            opacity: 0.6;
+        }
+
+        .curtain-right {
+            right: 0;
+            background: linear-gradient(-90deg, var(--plum-dark), transparent);
+            border-left: 3px solid var(--gold);
+            opacity: 0.6;
+        }
+
+        /* Header / Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 0 20px;
+        }
+
+        .hero-number {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(80px, 20vw, 160px);
+            font-weight: 400;
+            color: var(--gold);
+            line-height: 1;
+            text-shadow: 0 4px 20px rgba(212, 168, 83, 0.3);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 400;
+            color: var(--gold-light);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            font-style: italic;
+            color: var(--gold-pale);
+            margin-top: 30px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            display: inline-block;
+            color: var(--gold-light);
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Main content */
+        .content {
+            text-align: center;
+            padding: 20px 20px 30px;
+            max-width: 600px;
+        }
+
+        .tagline {
+            font-size: 22px;
+            line-height: 1.7;
+            color: var(--cream);
+            font-weight: 300;
+        }
+
+        .tagline em {
+            color: var(--gold-light);
+            font-style: italic;
+        }
+
+        /* CTA Button */
+        .cta-section {
+            margin: 30px 0 50px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 50px;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--plum-dark);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-light));
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(212, 168, 83, 0.4);
+        }
+
+        .cta-button::before,
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+        }
+
+        .cta-button::before {
+            top: -8px;
+            left: -8px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .cta-button::after {
+            bottom: -8px;
+            right: -8px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(212, 168, 83, 0.5);
+            background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+        }
+
+        /* iPhone Preview Section */
+        .app-preview {
+            margin: 60px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .phone {
+            width: 280px;
+            height: 570px;
+            background: #1a1a1a;
+            border-radius: 45px;
+            padding: 14px;
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .phone:hover {
+            transform: translateY(-5px);
+        }
+
+        /* iPhone notch */
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 3;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            background: linear-gradient(180deg, var(--plum-dark) 0%, var(--plum) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Screen 1: Splash with image */
+        .screen-splash {
+            background: var(--plum);
+            padding: 0;
+        }
+
+        .screen-splash img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 35px;
+        }
+
+        /* Screen 2: Quote display */
+        .screen-quote {
+            padding: 60px 30px;
+            justify-content: space-between;
+        }
+
+        .quote-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quote-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .quote-divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 15px auto;
+        }
+
+        .quote-diamond {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            margin: 0 auto;
+        }
+
+        .quote-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--gold-pale);
+            text-align: center;
+            font-style: italic;
+            padding: 0 10px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .share-btn {
+            padding: 12px 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--gold);
+            background: transparent;
+            border: 1px solid var(--gold);
+            border-radius: 25px;
+            letter-spacing: 0.1em;
+        }
+
+        .noted-btn {
+            padding: 12px 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: var(--plum-dark);
+            background: var(--gold);
+            border: none;
+            border-radius: 25px;
+            letter-spacing: 0.1em;
+        }
+
+        /* Screen 3: Mystery question mark */
+        .screen-mystery {
+            background: linear-gradient(180deg, var(--plum-dark) 0%, var(--plum) 100%);
+            padding: 60px 30px;
+        }
+
+        .screen-mystery::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .question {
+            font-family: 'Playfair Display', serif;
+            font-size: 140px;
+            color: var(--gold);
+            line-height: 1;
+            text-shadow: 0 4px 30px rgba(212, 168, 83, 0.4);
+            animation: glow 3s ease-in-out infinite;
+            margin-bottom: 40px;
+        }
+
+        @keyframes glow {
+            0%, 100% { 
+                text-shadow: 0 4px 30px rgba(212, 168, 83, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 4px 50px rgba(212, 168, 83, 0.6);
+                transform: scale(1.02);
+            }
+        }
+
+       .hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    line-height: 1.5;
+    color: var(--gold-light);
+    font-weight: 300;
+    font-style: italic;
+    opacity: 0.95;
+    text-align: center;  /* Already there, but making sure */
+    padding: 0 20px;
+    max-width: 220px;
+    margin: 0 auto;  /* ADD THIS - centers the div itself */
+}
+
+        /* How It Works Section */
+        .how-it-works {
+            text-align: center;
+            padding: 60px 20px 40px;
+            max-width: 900px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 6vw, 48px);
+            color: var(--gold);
+            margin-bottom: 50px;
+            font-weight: 400;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--gold-light);
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .feature p {
+            font-size: 18px;
+            color: var(--gold-pale);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 60px 20px 40px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .copyright {
+            font-size: 13px;
+            color: var(--gold-pale);
+            opacity: 0.5;
+        }
+
+        /* Art Deco corner ornaments */
+        .corner-ornament {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .corner-ornament svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .corner-tl { top: 20px; left: 20px; }
+        .corner-tr { top: 20px; right: 20px; transform: scaleX(-1); }
+        .corner-bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
+        .corner-br { bottom: 20px; right: 20px; transform: scale(-1, -1); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .app-preview {
+                gap: 30px;
+            }
+
+            .phone {
+                width: 240px;
+                height: 490px;
+                padding: 12px;
+                border-radius: 38px;
+            }
+
+            .phone::before {
+                width: 100px;
+                height: 25px;
+            }
+
+            .screen {
+                border-radius: 28px;
+            }
+
+            .question {
+                font-size: 100px;
+            }
+
+            .hint {
+                font-size: 20px;
+                max-width: 180px;
+            }
+
+            .quote-text {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-preview {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .phone {
+                width: 280px;
+                height: 570px;
+            }
+
+            .question {
+                font-size: 120px;
+            }
+
+            .hint {
+                font-size: 22px;
+                max-width: 200px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .curtain-left, .curtain-right {
+                width: 30px;
+            }
+
+            .corner-ornament {
+                width: 40px;
+                height: 40px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .hero {
+                padding: 40px 0 20px;
+            }
+
+            .app-preview {
+                margin: 40px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative curtain edges -->
+    <div class="curtain-left"></div>
+    <div class="curtain-right"></div>
+
+    <!-- Corner ornaments -->
+    <div class="corner-ornament corner-tl">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" fill="#d4a853" opacity="0.6"/>
+            <path d="M15 15 L40 15 L40 20 L20 20 L20 40 L15 40 Z" fill="#d4a853" opacity="0.4"/>
+        </svg>
+    </div>
+    <div class="corner-ornament corner-tr">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" fill="#d4a853" opacity="0.6"/>
+            <path d="M15 15 L40 15 L40 20 L20 20 L20 40 L15 40 Z" fill="#d4a853" opacity="0.4"/>
+        </svg>
+    </div>
+    <div class="corner-ornament corner-bl">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" fill="#d4a853" opacity="0.6"/>
+            <path d="M15 15 L40 15 L40 20 L20 20 L20 40 L15 40 Z" fill="#d4a853" opacity="0.4"/>
+        </svg>
+    </div>
+    <div class="corner-ornament corner-br">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" fill="#d4a853" opacity="0.6"/>
+            <path d="M15 15 L40 15 L40 20 L20 20 L20 40 L15 40 Z" fill="#d4a853" opacity="0.4"/>
+        </svg>
+    </div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-number">364</div>
+            <h1 class="hero-title">Ways to Say No</h1>
+            <div class="deco-line"></div>
+            <p class="hero-subtitle">The art of the graceful decline <span class="sparkle">✦</span></p>
+        </section>
+
+        <!-- Main Content -->
+        <section class="content">
+            <p class="tagline">
+                Because sometimes <em>"No"</em> is a complete sentence.<br>
+                And sometimes, darling, it deserves a little more <em>flair</em>.
+            </p>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <a href="#" class="cta-button">Coming Soon</a>
+        </section>
+
+        <!-- iPhone App Preview - Three Screens -->
+        <section class="app-preview">
+            <!-- Screen 1: Splash -->
+            <div class="phone">
+                <div class="screen screen-splash">
+                    <img src="364-splash.png" alt="364 Splash Screen">
+                </div>
+            </div>
+
+            <!-- Screen 2: Quote -->
+            <div class="phone">
+                <div class="screen screen-quote">
+                    <div class="quote-header">
+                        <div class="quote-date">February 9</div>
+                        <div class="quote-divider"></div>
+                        <div class="quote-diamond"></div>
+                    </div>
+                    
+                    <div class="quote-text">
+                        "I accidentally used 'extra-strength' fabric softener and now my sheets are so slippery that if I don't stay perfectly centered, I'll slide off the bed like a wet seal."
+                    </div>
+
+                    <div class="quote-actions">
+                        <button class="share-btn">Share</button>
+                        <button class="noted-btn">Noted</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Mystery -->
+            <div class="phone">
+                <div class="screen screen-mystery">
+                    <div class="question">?</div>
+                    <div class="hint">There is, of course… one exception.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <div class="deco-line"></div>
+            <h2 class="section-title">How It Works</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">✦</div>
+                    <h3>Pick Your Day</h3>
+                    <p>Choose from 364 elegant ways to decline</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✦</div>
+                    <h3>Reveal Your Response</h3>
+                    <p>From subtle hints to dramatic declarations</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✦</div>
+                    <h3>Share the Art</h3>
+                    <p>Send the perfect refusal with style</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="deco-line"></div>
+        <div class="deco-diamond"></div>
+
+        <!-- Footer -->
+        <footer>
+            <nav class="footer-links">
+                <a href="https://publicbucket3222.blob.core.windows.net/$web/364/privacy.html">Privacy Policy</a>
+                <a href="https://publicbucket3222.blob.core.windows.net/$web/364/terms.html">Terms of Service</a>
+                <a href="mailto:364.help@gmail.com">Contact</a>
+            </nav>
+            <p class="copyright">&copy; 2026 364 Ways to Say No. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
