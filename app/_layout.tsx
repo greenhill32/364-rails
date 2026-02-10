@@ -11,12 +11,12 @@ export default function RootLayout() {
     <EntitlementProvider>
       <FavoritesProvider>
         <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#4a1942' }, // Plum background
-          animation: 'fade',
-        }}
-      >
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#4a1942' }, // Plum background
+            animation: 'fade',
+          }}
+        >
       <Stack.Screen 
         name="index" 
         options={{
