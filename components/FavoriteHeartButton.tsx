@@ -1,8 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { Heart } from 'lucide-react-native';
 import { Quote } from '@/constants/quotes';
 import { useFavorites } from '@/contexts/FavoritesContext';
+import Colors from '@/constants/colors';
 
 interface FavoriteHeartButtonProps {
   quote: Quote;
@@ -25,10 +26,10 @@ export function FavoriteHeartButton({ quote, onPress }: FavoriteHeartButtonProps
         activeOpacity={0.7}
         style={styles.button}
       >
-        <AntDesign
-          name={favorited ? 'heart' : 'hearto'}
+        <Heart
           size={32}
-          color={favorited ? '#d4af37' : '#f5f1e8'}
+          color={favorited ? Colors.gold : Colors.cream}
+          fill={favorited ? Colors.gold : 'transparent'}
         />
       </TouchableOpacity>
     </View>
