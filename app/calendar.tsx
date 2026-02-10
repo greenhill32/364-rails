@@ -18,7 +18,6 @@ import { Settings } from 'lucide-react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
 import { useEntitlement } from '@/contexts/EntitlementContext';
-import { QUOTES_364, Quote } from '@/constants/quotes';
 import { QuoteModal } from '../components/QuoteModal';
 import { AmoreModal } from '../components/AmoreModal';
 import { LockModal } from '../components/LockModal';
