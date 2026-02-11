@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Settings } from 'lucide-react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
+import { Quote } from '@/constants/quotes';
 import { useEntitlement } from '@/contexts/EntitlementContext';
 import { QuoteModal } from '../components/QuoteModal';
 import { AmoreModal } from '../components/AmoreModal';

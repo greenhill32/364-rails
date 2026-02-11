@@ -8,7 +8,7 @@ export interface Quote {
   rating: 0 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 }
 
-export const QUOTES_364 = {
+export const QUOTES_364: Record<string, Quote[]> = {
   free: [
     { id: "free-0", text: "\u201cI used extra-strength fabric softener and now my sheets are so slippery I\u2019ll slide off the bed like a wet seal.\u201d", rating: 0 },
     { id: "free-1", text: "I can\u2019t tonight. My cat\u2019s therapist says she needs more one\u2011to\u2011one time.", rating: 0 },

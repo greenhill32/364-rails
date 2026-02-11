@@ -5,8 +5,17 @@
 import { Stack } from 'expo-router';
 import { EntitlementProvider } from '@/contexts/EntitlementContext';
 import { FavoritesProvider } from '@/contexts/FavoritesContext';
+import * as Sentry from '@sentry/react-native';
 
-export default function RootLayout() {
+// Initialize Sentry for crash reporting
+if (process.env.EXPO_PUBLIC_SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    enableAutoPerformanceTracing: true,
+  });
+}
+
+function RootLayoutContent() {
   return (
     <EntitlementProvider>
       <FavoritesProvider>
@@ -17,19 +26,19 @@ export default function RootLayout() {
             animation: 'fade',
           }}
         >
-      <Stack.Screen 
-        name="index" 
+      <Stack.Screen
+        name="index"
         options={{
           animation: 'fade',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="about"
         options={{
           animation: 'fade',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="pick-golden-day"
         options={{
           animation: 'fade',
@@ -46,3 +55,6 @@ export default function RootLayout() {
     </EntitlementProvider>
   );
 }
+
+// Wrap with Sentry's error boundary for crash reporting
+export default Sentry.wrap(RootLayoutContent);

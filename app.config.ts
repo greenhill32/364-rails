@@ -24,6 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: 'com.greenhill32.x364waystosayno',
+    versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundColor: '#4a1942',
@@ -36,6 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-router',
     'expo-build-properties',
     'expo-secure-store',
+    '@sentry/react-native/expo',
   ],
   experiments: {
     typedRoutes: true,
