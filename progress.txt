@@ -182,3 +182,23 @@ TODO (Code features added - 2026-02-07):
 ✅ Premature golden day screen — Shows when <5 regular taps, user can continue or go back
 ✅ Quote array trimmed — Exactly 364 total quotes (3 free + 361 unlocked)
 ⏳ Replace prem.gif placeholder with actual GIF asset
+
+---
+PHASE 5: SUPABASE FAVORITES ANALYTICS (Planned - before App Store submission)
+Item: Track favorites to Supabase for prompt analytics
+Status: ⏳ Planned
+Details:
+  1. Create favorites_analytics table in Supabase
+     - quote_id TEXT
+     - times_favorited INT
+     - last_favorited TIMESTAMP
+  2. Add Supabase client to app (@supabase/supabase-js)
+  3. Update FavoritesContext to sync with Supabase on heart tap
+  4. Anonymous tracking (no user ID, just quote popularity)
+  5. Goal: Identify which prompts resonate with users for future content decisions
+
+Dependencies:
+  - Supabase project (already have)
+  - Need: Supabase URL + anon key
+
+Next: Get Supabase credentials, implement, test on TestFlight, then run preflight-store before App Store submission
