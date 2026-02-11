@@ -1,7 +1,7 @@
 # Agent 1: Technical Preflight — "Does This App Actually Work?"
 
 > **Purpose**: Prove the app compiles, bundles, and runs in production mode BEFORE you burn an EAS build credit.
-> **Mode**: Autonomous. Read-only. No file modifications.
+> **Mode**: Autonomous You Do have permission to modify any file.
 > **Timeout**: 30 seconds per command. Kill and report if hung.
 > **Fail-fast**: If Phase 0 fails, STOP. Don't waste time on later phases.
 
@@ -631,10 +631,122 @@ echo "Date: $(git log -1 --format=%ci 2>/dev/null)"
 ---
 
 ## ══════════════════════════════════════════════════════════════
-## PHASE 7: FINAL TECHNICAL VERDICT
+## PHASE 7: EAS BUILD CONFIGURATION
 ## ══════════════════════════════════════════════════════════════
 
-Compile all results from Phases 0–6 into a final report.
+**Purpose**: Catch issues that will fail during EAS cloud build (fastlane, CocoaPods, signing).
+
+```bash
+# 7.1 — Check eas.json is valid and has production profile
+node -e "
+const eas = require('./eas.json');
+const prod = eas.build?.production;
+if (!prod) console.log('❌ BLOCKER: No production profile in eas.json');
+else {
+  console.log('✅ production profile exists');
+  if (prod.env?.SENTRY_DISABLE_AUTO_UPLOAD) console.log('✅ Sentry auto-upload disabled');
+  else if (prod.env?.SENTRY_ALLOW_FAILURE) console.log('✅ Sentry upload failure allowed');
+  else if (require('./package.json').dependencies['@sentry/react-native']) {
+    console.log('⚠️ Sentry installed but SENTRY_DISABLE_AUTO_UPLOAD or SENTRY_ALLOW_FAILURE not set');
+    console.log('   Without this, build will fail: set env.SENTRY_DISABLE_AUTO_UPLOAD=true in eas.json');
+  }
+}
+"
+
+# 7.2 — Check iOS-specific config
+node -e "
+const content = require('fs').readFileSync('./app.config.ts', 'utf8');
+const hasVersion = /version:\s*['\"]/g.test(content);
+const hasBuildNum = /buildNumber:\s*['\"]/g.test(content);
+const hasBundleId = /bundleIdentifier:\s*['\"]/g.test(content);
+const hasIcon = /icon:\s*['\"]/g.test(content);
+const hasSplash = /splash:\s*\{/g.test(content);
+
+console.log('iOS Config:');
+console.log(hasVersion ? '✅' : '❌', 'version configured');
+console.log(hasBuildNum ? '✅' : '❌', 'buildNumber configured');
+console.log(hasBundleId ? '✅' : '❌', 'bundleIdentifier configured');
+console.log(hasIcon ? '✅' : '❌', 'icon configured');
+console.log(hasSplash ? '✅' : '❌', 'splash configured');
+"
+
+# 7.3 — Check for Sentry without configuration (will fail)
+node -e "
+const pkg = require('./package.json');
+const deps = {...(pkg.dependencies || {}), ...(pkg.devDependencies || {})};
+if (deps['@sentry/react-native']) {
+  const eas = require('./eas.json');
+  const prod = eas.build?.production || {};
+  const env = prod.env || {};
+
+  if (!env.SENTRY_DISABLE_AUTO_UPLOAD && !env.SENTRY_ALLOW_FAILURE) {
+    console.log('⚠️ BLOCKER: Sentry installed but not configured for EAS');
+    console.log('   Fix: Add to eas.json production profile:');
+    console.log('   \"env\": { \"SENTRY_DISABLE_AUTO_UPLOAD\": \"true\" }');
+  }
+}
+"
+
+# 7.4 — Check native module plugins
+node -e "
+const fs = require('fs');
+const content = fs.readFileSync('./app.config.ts', 'utf8');
+const pkg = require('./package.json');
+const deps = Object.keys({...(pkg.dependencies || {}), ...(pkg.devDependencies || {})});
+
+const pluginsStr = content.match(/plugins:\s*\[([\s\S]*?)\]/)?.[1] || '';
+
+console.log('Plugin Configuration:');
+['expo-router', 'expo-build-properties'].forEach(plugin => {
+  if (pluginsStr.includes(plugin)) console.log('✅', plugin, 'in plugins');
+  else console.log('❌', plugin, 'MISSING from plugins');
+});
+
+if (deps.includes('expo-secure-store') && pluginsStr.includes('expo-secure-store')) {
+  console.log('✅ expo-secure-store plugin configured');
+} else if (deps.includes('expo-secure-store')) {
+  console.log('⚠️ expo-secure-store installed but plugin NOT configured');
+}
+
+if (deps.includes('@sentry/react-native') && pluginsStr.includes('@sentry/react-native/expo')) {
+  console.log('✅ @sentry/react-native/expo plugin configured');
+} else if (deps.includes('@sentry/react-native')) {
+  console.log('⚠️ @sentry/react-native installed but plugin NOT configured');
+}
+"
+
+# 7.5 — Check environment variables for build
+echo ""
+echo "--- Environment Variables ---"
+if [ -f ".env" ]; then
+  echo "✅ .env file exists"
+  grep -E "REVENUECAT|SENTRY" .env 2>/dev/null | head -5 || echo "⚠️ No API keys in .env"
+else
+  echo "⚠️ No .env file"
+fi
+
+# 7.6 — Check for Expo SDK version compatibility
+node -e "
+const pkg = require('./package.json');
+const expo = pkg.dependencies?.expo;
+if (expo) {
+  const major = parseInt(expo.replace(/[^0-9]/g, '').substring(0, 2));
+  console.log('Expo SDK version:', expo, '(major:', major + ')');
+  if (major >= 50) console.log('✅ Using modern Expo SDK (>= 50)');
+  else console.log('⚠️ Expo SDK < 50 may have issues');
+}
+"
+```
+
+**STOP IF**: Any BLOCKER detected in 7.1, 7.2, or 7.3. These will cause EAS build failure.
+
+---
+
+## ══════════════════════════════════════════════════════════════
+## PHASE 8: FINAL TECHNICAL VERDICT
+## ══════════════════════════════════════════════════════════════
+
+Compile all results from Phases 0–7 into a final report.
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
@@ -648,6 +760,7 @@ Compile all results from Phases 0–6 into a final report.
 ║  Phase 4 (App Configuration):    ✅/❌                        ║
 ║  Phase 5 (Crash Reporting):      ✅/⚠️                        ║
 ║  Phase 6 (Git & Build Ready):    ✅/⚠️                        ║
+║  Phase 7 (EAS Build Config):     ✅/❌  ← NEW (Sentry check)   ║
 ║                                                               ║
 ║  VERDICT: ✅ TECHNICALLY READY / ❌ NOT READY                 ║
 ║                                                               ║
@@ -667,6 +780,7 @@ Compile all results from Phases 0–6 into a final report.
 **Decision logic**:
 - ANY ❌ in Phases 0–2 = **NOT READY** (build will fail)
 - ANY ❌ in Phase 4 (missing bundleId, version, icon) = **NOT READY** (Apple rejects)
+- ANY ❌ in Phase 7 (Sentry not configured, EAS config invalid) = **NOT READY** (EAS build will fail)
 - Only ⚠️ warnings = **READY WITH WARNINGS** (build will work, but fix soon)
 - All ✅ = **READY** → proceed to Agent 2
 
@@ -1292,10 +1406,122 @@ echo "Date: $(git log -1 --format=%ci 2>/dev/null)"
 ---
 
 ## ══════════════════════════════════════════════════════════════
-## PHASE 7: FINAL TECHNICAL VERDICT
+## PHASE 7: EAS BUILD CONFIGURATION
 ## ══════════════════════════════════════════════════════════════
 
-Compile all results from Phases 0–6 into a final report.
+**Purpose**: Catch issues that will fail during EAS cloud build (fastlane, CocoaPods, signing).
+
+```bash
+# 7.1 — Check eas.json is valid and has production profile
+node -e "
+const eas = require('./eas.json');
+const prod = eas.build?.production;
+if (!prod) console.log('❌ BLOCKER: No production profile in eas.json');
+else {
+  console.log('✅ production profile exists');
+  if (prod.env?.SENTRY_DISABLE_AUTO_UPLOAD) console.log('✅ Sentry auto-upload disabled');
+  else if (prod.env?.SENTRY_ALLOW_FAILURE) console.log('✅ Sentry upload failure allowed');
+  else if (require('./package.json').dependencies['@sentry/react-native']) {
+    console.log('⚠️ Sentry installed but SENTRY_DISABLE_AUTO_UPLOAD or SENTRY_ALLOW_FAILURE not set');
+    console.log('   Without this, build will fail: set env.SENTRY_DISABLE_AUTO_UPLOAD=true in eas.json');
+  }
+}
+"
+
+# 7.2 — Check iOS-specific config
+node -e "
+const content = require('fs').readFileSync('./app.config.ts', 'utf8');
+const hasVersion = /version:\s*['\"]/g.test(content);
+const hasBuildNum = /buildNumber:\s*['\"]/g.test(content);
+const hasBundleId = /bundleIdentifier:\s*['\"]/g.test(content);
+const hasIcon = /icon:\s*['\"]/g.test(content);
+const hasSplash = /splash:\s*\{/g.test(content);
+
+console.log('iOS Config:');
+console.log(hasVersion ? '✅' : '❌', 'version configured');
+console.log(hasBuildNum ? '✅' : '❌', 'buildNumber configured');
+console.log(hasBundleId ? '✅' : '❌', 'bundleIdentifier configured');
+console.log(hasIcon ? '✅' : '❌', 'icon configured');
+console.log(hasSplash ? '✅' : '❌', 'splash configured');
+"
+
+# 7.3 — Check for Sentry without configuration (will fail)
+node -e "
+const pkg = require('./package.json');
+const deps = {...(pkg.dependencies || {}), ...(pkg.devDependencies || {})};
+if (deps['@sentry/react-native']) {
+  const eas = require('./eas.json');
+  const prod = eas.build?.production || {};
+  const env = prod.env || {};
+
+  if (!env.SENTRY_DISABLE_AUTO_UPLOAD && !env.SENTRY_ALLOW_FAILURE) {
+    console.log('⚠️ BLOCKER: Sentry installed but not configured for EAS');
+    console.log('   Fix: Add to eas.json production profile:');
+    console.log('   \"env\": { \"SENTRY_DISABLE_AUTO_UPLOAD\": \"true\" }');
+  }
+}
+"
+
+# 7.4 — Check native module plugins
+node -e "
+const fs = require('fs');
+const content = fs.readFileSync('./app.config.ts', 'utf8');
+const pkg = require('./package.json');
+const deps = Object.keys({...(pkg.dependencies || {}), ...(pkg.devDependencies || {})});
+
+const pluginsStr = content.match(/plugins:\s*\[([\s\S]*?)\]/)?.[1] || '';
+
+console.log('Plugin Configuration:');
+['expo-router', 'expo-build-properties'].forEach(plugin => {
+  if (pluginsStr.includes(plugin)) console.log('✅', plugin, 'in plugins');
+  else console.log('❌', plugin, 'MISSING from plugins');
+});
+
+if (deps.includes('expo-secure-store') && pluginsStr.includes('expo-secure-store')) {
+  console.log('✅ expo-secure-store plugin configured');
+} else if (deps.includes('expo-secure-store')) {
+  console.log('⚠️ expo-secure-store installed but plugin NOT configured');
+}
+
+if (deps.includes('@sentry/react-native') && pluginsStr.includes('@sentry/react-native/expo')) {
+  console.log('✅ @sentry/react-native/expo plugin configured');
+} else if (deps.includes('@sentry/react-native')) {
+  console.log('⚠️ @sentry/react-native installed but plugin NOT configured');
+}
+"
+
+# 7.5 — Check environment variables for build
+echo ""
+echo "--- Environment Variables ---"
+if [ -f ".env" ]; then
+  echo "✅ .env file exists"
+  grep -E "REVENUECAT|SENTRY" .env 2>/dev/null | head -5 || echo "⚠️ No API keys in .env"
+else
+  echo "⚠️ No .env file"
+fi
+
+# 7.6 — Check for Expo SDK version compatibility
+node -e "
+const pkg = require('./package.json');
+const expo = pkg.dependencies?.expo;
+if (expo) {
+  const major = parseInt(expo.replace(/[^0-9]/g, '').substring(0, 2));
+  console.log('Expo SDK version:', expo, '(major:', major + ')');
+  if (major >= 50) console.log('✅ Using modern Expo SDK (>= 50)');
+  else console.log('⚠️ Expo SDK < 50 may have issues');
+}
+"
+```
+
+**STOP IF**: Any BLOCKER detected in 7.1, 7.2, or 7.3. These will cause EAS build failure.
+
+---
+
+## ══════════════════════════════════════════════════════════════
+## PHASE 8: FINAL TECHNICAL VERDICT
+## ══════════════════════════════════════════════════════════════
+
+Compile all results from Phases 0–7 into a final report.
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
@@ -1309,6 +1535,7 @@ Compile all results from Phases 0–6 into a final report.
 ║  Phase 4 (App Configuration):    ✅/❌                        ║
 ║  Phase 5 (Crash Reporting):      ✅/⚠️                        ║
 ║  Phase 6 (Git & Build Ready):    ✅/⚠️                        ║
+║  Phase 7 (EAS Build Config):     ✅/❌  ← NEW (Sentry check)   ║
 ║                                                               ║
 ║  VERDICT: ✅ TECHNICALLY READY / ❌ NOT READY                 ║
 ║                                                               ║
@@ -1328,6 +1555,7 @@ Compile all results from Phases 0–6 into a final report.
 **Decision logic**:
 - ANY ❌ in Phases 0–2 = **NOT READY** (build will fail)
 - ANY ❌ in Phase 4 (missing bundleId, version, icon) = **NOT READY** (Apple rejects)
+- ANY ❌ in Phase 7 (Sentry not configured, EAS config invalid) = **NOT READY** (EAS build will fail)
 - Only ⚠️ warnings = **READY WITH WARNINGS** (build will work, but fix soon)
 - All ✅ = **READY** → proceed to Agent 2
 
