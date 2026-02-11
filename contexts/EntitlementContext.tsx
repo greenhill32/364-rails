@@ -83,17 +83,24 @@ export function EntitlementProvider({ children }: Props) {
   const [goldenDay, setGoldenDayState] = useState<GoldenDay>(null);
   const [usedQuoteIndices, setUsedQuoteIndices] = useState<Set<number>>(new Set());
 
+  const [isRevenueCatConfigured, setIsRevenueCatConfigured] = useState(false);
+
   // Load persisted state and configure RevenueCat on mount
   useEffect(() => {
     const init = async () => {
       await loadPersistedState();
       const apiKey = Constants.expoConfig?.extra?.revenueCatApiKey;
       if (apiKey) {
-        await Purchases.configure({ apiKey });
+        try {
+          await Purchases.configure({ apiKey });
+          setIsRevenueCatConfigured(true);
+          await checkEntitlement();
+        } catch (error) {
+          setIsLoading(false);
+        }
       } else {
-        console.error('RevenueCat API key not found in config');
+        setIsLoading(false);
       }
-      await checkEntitlement();
     };
     init();
   }, []);

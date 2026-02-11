@@ -21,7 +21,8 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "REVENUECAT_API_KEY": "test_nBATQtnaacwTUNBNNBapyAtKVDB"
       }
     }
   },

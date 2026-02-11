@@ -8,9 +8,12 @@ import { FavoritesProvider } from '@/contexts/FavoritesContext';
 import * as Sentry from '@sentry/react-native';
 
 // Initialize Sentry for crash reporting
-if (process.env.EXPO_PUBLIC_SENTRY_DSN) {
+const sentryDSN = process.env.EXPO_PUBLIC_SENTRY_DSN;
+const isSentryEnabled = !!sentryDSN;
+
+if (isSentryEnabled) {
   Sentry.init({
-    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    dsn: sentryDSN,
     enableAutoPerformanceTracing: true,
   });
 }
@@ -56,5 +59,5 @@ function RootLayoutContent() {
   );
 }
 
-// Wrap with Sentry's error boundary for crash reporting
-export default Sentry.wrap(RootLayoutContent);
+// Only wrap with Sentry if initialized, otherwise export directly
+export default isSentryEnabled ? Sentry.wrap(RootLayoutContent) : RootLayoutContent;
