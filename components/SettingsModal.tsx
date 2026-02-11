@@ -14,7 +14,7 @@ type SettingsModalProps = {
 };
 
 export function SettingsModal({ visible, onClose }: SettingsModalProps) {
-  const { restore, isPro, devTogglePro } = useEntitlement();
+  const { restore, isPro } = useEntitlement();
   const [isRestoring, setIsRestoring] = useState(false);
 
   const handleRestore = async () => {
@@ -102,22 +102,6 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
 
           {/* Divider */}
           <View style={styles.divider} />
-
-          {/* Divider */}
-          <View style={styles.divider} />
-
-          {/* Dev Toggle Pro (Hidden in production) */}
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={devTogglePro}
-            accessibilityRole="button"
-            accessibilityLabel="Toggle pro status"
-          >
-            <Text style={[styles.menuItemText, { fontSize: 12, opacity: 0.6 }]}>
-              [DEV] {isPro ? 'Unpaid' : 'Paid'}
-            </Text>
-            <Text style={styles.menuItemChevron}>›</Text>
-          </TouchableOpacity>
 
           {/* App Version */}
           <View style={styles.versionContainer}>

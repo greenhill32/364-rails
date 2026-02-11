@@ -49,7 +49,6 @@ type EntitlementState = {
   decrementTap: () => Promise<void>;
   addTappedDay: (dateKey: string) => Promise<void>;
   setGoldenDay: (month: number, date: number) => Promise<void>;
-  devTogglePro: () => void;
   getNextQuote: (isPro: boolean, freeQuoteIndex: number) => { quote: Quote; newIndex?: number };
 };
 
@@ -65,7 +64,6 @@ const EntitlementContext = createContext<EntitlementState>({
   decrementTap: async () => {},
   addTappedDay: async () => {},
   setGoldenDay: async () => {},
-  devTogglePro: () => {},
   getNextQuote: () => ({ quote: { id: '', text: '', rating: 0 as 0 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 } }),
 });
 
@@ -214,15 +212,6 @@ export function EntitlementProvider({ children }: Props) {
     }
   };
 
-  const devTogglePro = () => {
-    setIsPro(!isPro);
-    if (!isPro) {
-      setRemainingTaps(Infinity);
-    } else {
-      setRemainingTaps(3);
-    }
-  };
-
   const getNextQuote = (isPro: boolean, freeQuoteIndex: number): { quote: Quote; newIndex?: number } => {
     if (!isPro) {
       // Free users cycle through 3 free quotes
@@ -272,7 +261,6 @@ export function EntitlementProvider({ children }: Props) {
     decrementTap,
     addTappedDay,
     setGoldenDay,
-    devTogglePro,
     getNextQuote,
   };
 
