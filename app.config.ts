@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: '364 Ways to Say No',
   slug: '364-ways-to-say-no',
-  version: '1.0.0',
+  version: '2.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
@@ -17,14 +17,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: false,
     bundleIdentifier: 'com.greenhill32.364waystosayno',
     backgroundColor: '#4a1942',
-    buildNumber: '1',
+    buildNumber: '2',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
   },
   android: {
     package: 'com.greenhill32.x364waystosayno',
-    versionCode: 1,
+    versionCode: 2,
     adaptiveIcon: {
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundColor: '#4a1942',
